@@ -1,0 +1,16 @@
+{
+    "medicines": {
+        "Paracetamol": {
+            "uses": ["fever", "pain", "headache"],
+            "dosage": "500mg every 4-6 hours",
+            "side_effects": ["Rare: skin rash"],
+            "precautions": ["Do not exceed recommended dosage", "Consult doctor if pregnant"]
+        },
+        "Ibuprofen": {
+            "uses": ["pain", "inflammation", "fever"],
+            "dosage": "200-400mg every 4-6 hours",
+            "side_effects": ["Stomach pain", "Heartburn"],
+            "precautions": ["Take with food", "Avoid if allergic to aspirin"]
+        }
+    }
+}

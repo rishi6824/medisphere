@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Hospital Locator</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <button class="btn btn-primary" onclick="getLocationAndFindHospitals()">
+                                <i class="fas fa-location-arrow"></i> Find Hospitals Near Me
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <form method="GET" class="row g-2">
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" name="city" 
+                                           value="{{ city }}" placeholder="City">
+                                </div>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control" name="state" 
+                                           value="{{ state }}" placeholder="State">
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-secondary w-100">Search</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    {% if hospitals %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Hospital Name</th>
+                                    <th>Address</th>
+                                    <th>City</th>
+                                    <th>State</th>
+                                    <th>Speciality</th>
+                                    <th>Phone</th>
+                                    {% if hospitals[0].distance_km is defined %}
+                                    <th>Distance</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for hospital in hospitals %}
+                                <tr class="hospital-card" onclick="showHospitalDetails({{ loop.index0 }})">
+                                    <td>{{ hospital.name }}</td>
+                                    <td>{{ hospital.address }}</td>
+                                    <td>{{ hospital.city }}</td>
+                                    <td>{{ hospital.state }}</td>
+                                    <td>{{ hospital.speciality }}</td>
+                                    <td>{{ hospital.phone }}</td>
+                                    {% if hospital.distance_km is defined %}
+                                    <td>{{ hospital.distance_km }} km</td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        No hospitals found. Try searching by location or use "Find Hospitals Near Me".
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hospital Details Modal -->
+<div class="modal fade" id="hospitalModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="hospitalName">Hospital Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="hospitalDetails">
+                <!-- Details will be filled by JavaScript -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function getLocationAndFindHospitals() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                window.location.href = `{{ url_for('hospitals') }}?lat=${lat}&lon=${lon}`;
+            },
+            function(error) {
+                alert('Unable to get your location. Please enable location services.');
+            }
+        );
+    } else {
+        alert('Geolocation is not supported by your browser.');
+    }
+}
+
+function showHospitalDetails(index) {
+    const hospitals = {{ hospitals|tojson }};
+    const hospital = hospitals[index];
+    
+    document.getElementById('hospitalName').textContent = hospital.name;
+    document.getElementById('hospitalDetails').innerHTML = `
+        <p><strong>Address:</strong> ${hospital.address}</p>
+        <p><strong>City:</strong> ${hospital.city}</p>
+        <p><strong>State:</strong> ${hospital.state}</p>
+        <p><strong>Speciality:</strong> ${hospital.speciality}</p>
+        <p><strong>Phone:</strong> <a href="tel:${hospital.phone}">${hospital.phone}</a></p>
+        ${hospital.distance_km ? `<p><strong>Distance:</strong> ${hospital.distance_km} km</p>` : ''}
+        <div class="text-center mt-3">
+            <a href="tel:${hospital.phone}" class="btn btn-primary me-2">
+                <i class="fas fa-phone"></i> Call Now
+            </a>
+            <button class="btn btn-success" onclick="getDirections(${hospital.lat}, ${hospital.lon})">
+                <i class="fas fa-directions"></i> Get Directions
+            </button>
+        </div>
+    `;
+    
+    const modal = new bootstrap.Modal(document.getElementById('hospitalModal'));
+    modal.show();
+}
+
+function getDirections(lat, lon) {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const userLat = position.coords.latitude;
+            const userLon = position.coords.longitude;
+            const url = `https://www.google.com/maps/dir/${userLat},${userLon}/${lat},${lon}`;
+            window.open(url, '_blank');
+        });
+    } else {
+        const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+        window.open(url, '_blank');
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>AI Symptom Checker</h4>
+                    <p class="mb-0">Select your symptoms and get AI-powered diagnosis</p>
+                </div>
+                <div class="card-body">
+                    <form method="POST" id="diagnosisForm">
+                        <div class="mb-4">
+                            <h5>Select Symptoms:</h5>
+                            <div class="row" id="symptomsList">
+                                {% for symptom in symptoms %}
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input symptom-checkbox" type="checkbox" 
+                                               name="symptoms" value="{{ symptom.name }}" id="symptom{{ symptom.id }}">
+                                        <label class="form-check-label" for="symptom{{ symptom.id }}">
+                                            {{ symptom.name }} ({{ symptom.severity_level }})
+                                        </label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="additional_symptoms" class="form-label">Additional Symptoms (comma separated)</label>
+                            <textarea class="form-control" id="additional_symptoms" name="additional_symptoms" 
+                                      rows="3" placeholder="e.g., headache, fever, cough"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-lg">Get Diagnosis</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('diagnosisForm').addEventListener('submit', function(e) {
+    const checkedSymptoms = document.querySelectorAll('input[name="symptoms"]:checked');
+    const additionalSymptoms = document.getElementById('additional_symptoms').value.trim();
+    
+    if (checkedSymptoms.length === 0 && additionalSymptoms === '') {
+        e.preventDefault();
+        alert('Please select at least one symptom or enter additional symptoms.');
+    }
+});
+</script>
+{% endblock %}

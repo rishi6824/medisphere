@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="diagnosis-result text-white mb-4">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h3>Diagnosis Result</h3>
+                        <h2>{{ disease }}</h2>
+                        <p class="mb-0">Confidence: {{ (confidence * 100)|round(1) }}%</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <i class="fas fa-stethoscope fa-5x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Selected Symptoms</h5>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        {% for symptom in symptoms %}
+                        <li>{{ symptom }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h5>Precautions & Advice</h5>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        {% for precaution in precautions %}
+                        <li>{{ precaution }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recommended Medicines</h5>
+                </div>
+                <div class="card-body">
+                    {% for medicine in medicines %}
+                    <div class="medicine-card mb-3 p-3">
+                        <h6>{{ medicine.name }} ({{ medicine.type }})</h6>
+                        <p class="mb-1"><strong>Dosage:</strong> {{ medicine.dosage }}</p>
+                        <p class="mb-0"><strong>Frequency:</strong> {{ medicine.frequency }}</p>
+                    </div>
+                    {% endfor %}
+                    
+                    <div class="alert alert-warning mt-3">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Important:</strong> Consult a healthcare professional before taking any medication.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <a href="{{ url_for('diagnosis') }}" class="btn btn-primary me-2">New Diagnosis</a>
+            <a href="{{ url_for('medicines') }}" class="btn btn-success me-2">Browse Medicines</a>
+            <a href="{{ url_for('hospitals') }}" class="btn btn-warning">Find Hospitals</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

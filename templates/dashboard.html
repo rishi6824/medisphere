@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Welcome, {{ user.first_name }}!</h5>
+                    <p class="card-text">Last login: {{ user.last_login.strftime('%Y-%m-%d %H:%M') if user.last_login else 'First time' }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-stethoscope fa-2x text-primary mb-3"></i>
+                            <h5>AI Diagnosis</h5>
+                            <p>Check your symptoms and get AI-powered diagnosis</p>
+                            <a href="{{ url_for('diagnosis') }}" class="btn btn-primary">Start Diagnosis</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-pills fa-2x text-success mb-3"></i>
+                            <h5>Medicine Guide</h5>
+                            <p>Search for medicines and their information</p>
+                            <a href="{{ url_for('medicines') }}" class="btn btn-success">Browse Medicines</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-hospital fa-2x text-warning mb-3"></i>
+                            <h5>Hospital Locator</h5>
+                            <p>Find nearby hospitals and healthcare facilities</p>
+                            <a href="{{ url_for('hospitals') }}" class="btn btn-warning">Find Hospitals</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-robot fa-2x text-info mb-3"></i>
+                            <h5>Medical Chatbot</h5>
+                            <p>Get answers to your health questions</p>
+                            <button class="btn btn-info" onclick="openChat()">Start Chat</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Diagnoses -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Recent Diagnoses</h5>
+                </div>
+                <div class="card-body">
+                    {% if user.diagnoses %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Symptoms</th>
+                                    <th>Diagnosis</th>
+                                    <th>Confidence</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for diagnosis in user.diagnoses[-5:]|reverse %}
+                                <tr>
+                                    <td>{{ diagnosis.created_at.strftime('%Y-%m-%d') }}</td>
+                                    <td>{{ diagnosis.get_symptoms()[:2]|join(', ') }}...</td>
+                                    <td>{{ diagnosis.diagnosed_disease }}</td>
+                                    <td>{{ (diagnosis.confidence_score * 100)|round(1) }}%</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No diagnosis history yet. <a href="{{ url_for('diagnosis') }}">Start your first diagnosis</a></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chatbot Modal -->
+<div class="modal fade" id="chatModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Medibot - Medical Assistant</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="chatMessages" style="height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin-bottom: 10px;"></div>
+                <div class="input-group">
+                    <input type="text" id="chatInput" class="form-control" placeholder="Ask a medical question...">
+                    <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function openChat() {
+    var chatModal = new bootstrap.Modal(document.getElementById('chatModal'));
+    chatModal.show();
+}
+
+function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    // Add user message to chat
+    addMessage('You: ' + message, 'user');
+    input.value = '';
+    
+    // Send to server
+    fetch('{{ url_for("chat") }}', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({message: message})
+    })
+    .then(response => response.json())
+    .then(data => {
+        addMessage('Medibot: ' + data.response, 'bot');
+    });
+}
+
+function addMessage(text, sender) {
+    const messagesDiv = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.innerHTML = `<strong>${text}</strong>`;
+    messageDiv.style.marginBottom = '10px';
+    messageDiv.style.color = sender === 'user' ? '#007bff' : '#28a745';
+    messagesDiv.appendChild(messageDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+document.getElementById('chatInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        sendMessage();
+    }
+});
+</script>
+{% endblock %}

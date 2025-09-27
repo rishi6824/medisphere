@@ -1,0 +1,16 @@
+name,city,state,speciality,lat,lon,address,phone,rating
+AIIMS Delhi,Delhi,Delhi,Multi-Speciality,28.5670,77.2090,Ansari Nagar, New Delhi,011-26588585,4.8
+Apollo Hospital Delhi,Delhi,Delhi,Multi-Speciality,28.5355,77.3910,Sarita Vihar, New Delhi,011-26925858,4.7
+Fortis Escorts Heart Institute,Delhi,Delhi,Cardiac,28.5731,77.2231,Okhla Road, New Delhi,011-47135000,4.6
+Max Super Specialty Hospital,Delhi,Delhi,Multi-Speciality,28.5545,77.3308,Saket, New Delhi,011-26515050,4.7
+Lilavati Hospital,Mumbai,Maharashtra,Multi-Speciality,19.1222,72.8382,Bandra West, Mumbai,022-26751000,4.6
+Apollo Hospitals Chennai,Chennai,Tamil Nadu,Multi-Speciality,13.0286,80.2070,Greams Road, Chennai,044-28293333,4.7
+Narayana Health,Bangalore,Karnataka,Cardiac,12.9172,77.6226,Hosur Road, Bangalore,080-71222222,4.5
+Yashoda Hospitals,Hyderabad,Telangana,Multi-Speciality,17.3850,78.4867,Somajiguda, Hyderabad,040-45674567,4.6
+AMRI Hospital,Kolkata,West Bengal,Multi-Speciality,22.5726,88.3639,Salt Lake, Kolkata,033-66800000,4.5
+Kokilaben Dhirubhai Ambani Hospital,Mumbai,Maharashtra,Multi-Speciality,19.1297,72.8295,Four Bungalows, Andheri West,022-30999999,4.7
+Manipal Hospital,Bangalore,Karnataka,Multi-Speciality,12.9416,77.7027,Old Airport Road, Bangalore,080-25024444,4.6
+Medanta The Medicity,Gurgaon,Haryana,Multi-Speciality,28.5019,77.0926,Sector 38, Gurgaon,0124-4141414,4.8
+Artemis Hospital,Gurgaon,Haryana,Multi-Speciality,28.4962,77.0701,Sector 51, Gurgaon,0124-6767676,4.6
+Ruby Hall Clinic,Pune,Maharashtra,Multi-Speciality,18.5204,73.8567,Sassoon Road, Pune,020-66455555,4.5
+Sir Ganga Ram Hospital,Delhi,Delhi,Multi-Speciality,28.6428,77.2095,Rajinder Nagar, New Delhi,011-25735000,4.6

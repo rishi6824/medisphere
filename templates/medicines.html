@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Medicine Database</h4>
+                </div>
+                <div class="card-body">
+                    <form method="GET" class="mb-4">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="search" 
+                                   value="{{ search_query }}" placeholder="Search medicines...">
+                            <button class="btn btn-primary" type="submit">Search</button>
+                        </div>
+                    </form>
+                    
+                    {% if medicines %}
+                    <div class="row">
+                        {% for medicine in medicines %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card medicine-card">
+                                <div class="card-body">
+                                    <h5>{{ medicine.name }}</h5>
+                                    <p class="mb-1"><strong>Type:</strong> {{ medicine.type }}</p>
+                                    <p class="mb-1"><strong>Dosage:</strong> {{ medicine.dosage }}</p>
+                                    <p class="mb-1"><strong>Frequency:</strong> {{ medicine.frequency }}</p>
+                                    <p class="mb-1"><strong>For:</strong> {{ medicine.disease }}</p>
+                                    
+                                    {% if medicine.details %}
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-info" type="button" 
+                                                data-bs-toggle="collapse" 
+                                                data-bs-target="#details{{ loop.index }}">
+                                            View Details
+                                        </button>
+                                        <div class="collapse mt-2" id="details{{ loop.index }}">
+                                            <div class="card card-body">
+                                                <strong>Description:</strong> {{ medicine.details.description }}<br>
+                                                <strong>Side Effects:</strong> {{ medicine.details.side_effects }}<br>
+                                                <strong>Precautions:</strong> {{ medicine.details.precautions }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% elif search_query %}
+                    <div class="alert alert-info">
+                        No medicines found for "{{ search_query }}". Try a different search term.
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        Use the search bar above to find medicines. Enter the medicine name or condition.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
